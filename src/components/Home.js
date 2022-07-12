@@ -6,7 +6,8 @@ import ScoreItem from "./ScoreItem";
 const Home = ({ user }) => {
     const [recoveryToken, setRecoveryToken] = useState(null);
     const [scores, setScores] = useState([]);
-    const newTaskTextRef = useRef();
+    const titleTextRef = useRef();
+    const authorTextRef = useRef();
     const [errorText, setError] = useState("");
 
     useEffect(() => {
@@ -50,20 +51,27 @@ const Home = ({ user }) => {
     };
 
     const addScore = async () => {
-        let taskText = newTaskTextRef.current.value;
-        let task = taskText.trim();
-        if (task.length <= 3) {
-            setError("Task length should be more than 3!");
+        let titleText = titleTextRef.current.value;
+        let authorText = authorTextRef.current.value;
+        let title = titleText.trim();
+        let author = authorText.trim();
+        if (title.length <= 3) {
+            setError("Title length should be more than 3!");
         } else {
             let { data: score, error } = await supabase
                 .from("scores")
-                .insert({ url: task, created_by: user.id })
-                .single();
+                .insert({ 
+                    title: title, 
+                    url: 'placeholder', 
+                    author: author, 
+                    created_by: user.id 
+                }).single();
             if (error) setError(error.message);
             else {
                 setScores([score, ...scores]);
                 setError(null);
-                newTaskTextRef.current.value = "";
+                titleTextRef.current.value = "";
+                authorTextRef.current.value = "";
             }
         }
     };
@@ -102,7 +110,7 @@ const Home = ({ user }) => {
             </header>
             <div
                 className={"flex flex-col flex-grow p-4"}
-                style={{ height: "calc(80vh - 11.5rem)" }}
+                style={{ height: "calc(60vh - 11.5rem)" }}
             >
                 <div
                     className={`p-2 border flex-grow grid gap-2 ${
@@ -113,7 +121,7 @@ const Home = ({ user }) => {
                         scores.map((score) => (
                             <ScoreItem
                                 key={score.id}
-                                todo={score}
+                                score={score}
                                 onDelete={() => deleteScore(score.id)}
                             />
                         ))
@@ -137,9 +145,19 @@ const Home = ({ user }) => {
                     </div>
                 )}
             </div>
-            <div className={"flex m-4 mt-0 h-10"}>
+            <div className={"flex-col m-4 mt-0 h-10"}>
+                <p>Title</p>
                 <input
-                    ref={newTaskTextRef}
+                    ref={titleTextRef}
+                    type="text"
+                    onKeyUp={(e) => e.key === "Enter" && addScore()}
+                    className={
+                        "bg-gray-200 border px-2 border-gray-300 w-full mr-4"
+                    }
+                />
+                <p>Author</p>
+                <input
+                    ref={authorTextRef}
                     type="text"
                     onKeyUp={(e) => e.key === "Enter" && addScore()}
                     className={
