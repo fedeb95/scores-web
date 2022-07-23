@@ -26,7 +26,7 @@ function App() {
         <div className="min-w-full min-h-screen flex items-center justify-center bg-gray-200">
             {!session ? <Auth /> : 
               <div>
-                <Account key={session.user.id} session={session} /> 
+                {/* <Account key={session.user.id} session={session} />  */}
                 <Home user={session.user} />
               </div>
             }
