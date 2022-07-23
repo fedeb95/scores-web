@@ -5,7 +5,7 @@ const ScoreItem = ({ score, onDelete }) => {
 
     return (
         <div
-            className={"p-3 max-h-14 flex align-center justify-between border"}
+            className={"p-1 max-h-14 flex align-center justify-between border"}
         >
             <span className={"truncate flex-grow"}>
                     {score.title}, {score.author}

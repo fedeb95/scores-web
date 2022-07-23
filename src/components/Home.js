@@ -86,10 +86,10 @@ const Home = ({ user }) => {
             setRecoveryToken={setRecoveryToken}
         />
     ) : (
-        <div >
+        <div className={"md:columns-2"}>
             <header
                 className={
-                    "flex justify-between items-center px-4 h-16 bg-gray-900"
+                    "flex justify-between items-center px-10 h-16 bg-gray-900"
                 }
             >
                 <span
@@ -110,10 +110,10 @@ const Home = ({ user }) => {
             </header>
             <div
                 className={"flex flex-col flex-grow p-4"}
-                style={{ height: "calc(60vh - 11.5rem)" }}
+                style={{ height: "calc(85vh - 11.5rem)" }}
             >
                 <div
-                    className={`p-2 border flex-grow grid gap-2 ${
+                    className={`p-2 border flex-grow grid ${
                         scores.length ? "auto-rows-min" : ""
                     } grid-cols-1 h-2/3 overflow-y-scroll first:mt-8`}
                 >
