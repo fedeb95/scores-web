@@ -8,6 +8,9 @@ const Home = ({ user }) => {
     const [scores, setScores] = useState([]);
     const titleTextRef = useRef();
     const authorTextRef = useRef();
+
+    const filterTextRef = useRef();
+
     const [errorText, setError] = useState("");
 
     useEffect(() => {
@@ -76,6 +79,21 @@ const Home = ({ user }) => {
         }
     };
 
+    const filterScores = async () => {
+        let query = filterTextRef.current.value.trim();
+        if(query.length > 2){
+            let { data: scores, error } = await supabase
+            .from("scores")
+            .select("*")
+            .textSearch("title", query+':*')
+            .order("id", { ascending: false });
+            if (error) console.log("error", error);
+            else setScores(scores);
+        }else{
+            fetchScores();
+        }
+    };
+
     const handleLogout = async () => {
         supabase.auth.signOut().catch(console.error);
     };
@@ -108,6 +126,17 @@ const Home = ({ user }) => {
                     Logout
                 </button>
             </header>
+            <div>
+                <p>Search: </p>
+                <input
+                        ref={filterTextRef}
+                        type="text"
+                        onKeyUp={(e) => filterScores()}
+                        className={
+                            "bg-gray-200 border px-2 border-gray-300 w-full mr-4"
+                        }
+                    />
+            </div>
             <div
                 className={"flex flex-col flex-grow p-4"}
                 style={{ height: "calc(85vh - 11.5rem)" }}
