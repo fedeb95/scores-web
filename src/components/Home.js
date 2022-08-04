@@ -10,6 +10,8 @@ const Home = ({ user }) => {
     const authorTextRef = useRef();
 
     const filterTextRef = useRef();
+    const [isChangingFilter, setChangingFilter] = useState(false);
+    const [filterAttribute, setFilterAttribute] = useState('title');
 
     const [errorText, setError] = useState("");
 
@@ -31,8 +33,12 @@ const Home = ({ user }) => {
             setRecoveryToken(result.access_token);
         }
 
-        fetchScores().catch(console.error);
+        filterScores().catch(console.error);
     }, []);
+
+    useEffect(() => {
+        filterScores();
+    }, [filterAttribute]);
 
     const fetchScores = async () => {
         let { data: scores, error } = await supabase
@@ -85,7 +91,7 @@ const Home = ({ user }) => {
             let { data: scores, error } = await supabase
             .from("scores")
             .select("*")
-            .textSearch("title", query+':*')
+            .textSearch(filterAttribute, query+':*')
             .order("id", { ascending: false });
             if (error) console.log("error", error);
             else setScores(scores);
@@ -97,6 +103,10 @@ const Home = ({ user }) => {
     const handleLogout = async () => {
         supabase.auth.signOut().catch(console.error);
     };
+
+    const handleFilterChange = () => {
+
+    }
 
     return recoveryToken ? (
         <RecoverPassword
@@ -127,7 +137,7 @@ const Home = ({ user }) => {
                 </button>
             </header>
             <div className={" px-6 md:columns-2 "}>
-                <div>
+                <div className={"columns-2"}>
                     <p>Search: </p>
                     <input
                             ref={filterTextRef}
@@ -137,44 +147,80 @@ const Home = ({ user }) => {
                                 "bg-gray-200 border px-2 border-gray-300 w-full mr-4"
                             }
                         />
+
+                    <button
+                        onClick={() => setChangingFilter(!isChangingFilter)}
+                        className={
+                            "flex justify-center py-4 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                        }
+                    >{filterAttribute.replace(/^\w/, (c) => c.toUpperCase())}</button>
+
                 </div>
-                <div
-                    className={"flex flex-col flex-grow p-4"}
-                    style={{ height: "calc(85vh - 11.5rem)" }}
-                >
+                { isChangingFilter? 
+                    <div className={"flex flex-col"}>
+                        <button 
+                        className={ 
+                            "flex justify-center py-4 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                        }
+                        onClick={() => {
+                                setFilterAttribute('title');
+                                setChangingFilter(false);
+                            }
+                        }>
+                            Title
+                        </button>
+                        <button 
+                        className={ 
+                            "flex justify-center py-4 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                        }
+                        onClick={() => {
+                                setFilterAttribute('author');
+                                setChangingFilter(false);
+                            }
+                        }>
+                            Author
+                        </button>
+                    </div> 
+                    : 
                     <div
-                        className={`p-2 border flex-grow grid ${
-                            scores.length ? "auto-rows-min" : ""
-                        } grid-cols-1 h-2/3 overflow-y-scroll first:mt-8`}
+                        className={"flex flex-col flex-grow p-4"}
+                        style={{ height: "calc(85vh - 11.5rem)" }}
                     >
-                        {scores.length ? (
-                            scores.map((score) => (
-                                <ScoreItem
-                                    key={score.id}
-                                    score={score}
-                                    onDelete={() => deleteScore(score.id)}
-                                />
-                            ))
-                        ) : (
-                            <span
+                        <div
+                            className={`p-2 border flex-grow grid ${
+                                scores.length ? "auto-rows-min" : ""
+                            } grid-cols-1 h-2/3 overflow-y-scroll first:mt-8`}
+                        >
+                            {scores.length ? (
+                                scores.map((score) => (
+                                    <ScoreItem
+                                        key={score.id}
+                                        score={score}
+                                        onDelete={() => deleteScore(score.id)}
+                                    />
+                                ))
+                            ) : (
+                                <span
+                                    className={
+                                        "h-full flex justify-center items-center"
+                                    }
+                                >
+                                    You do have any scores yet!
+                                </span>
+                            )}
+                        </div>
+                        {!!errorText && (
+                            <div
                                 className={
-                                    "h-full flex justify-center items-center"
+                                    "border max-w-sm self-center px-4 py-2 mt-4 text-center text-sm bg-red-100 border-red-300 text-red-400"
                                 }
                             >
-                                You do have any scores yet!
-                            </span>
+                                {errorText}
+                            </div>
                         )}
                     </div>
-                    {!!errorText && (
-                        <div
-                            className={
-                                "border max-w-sm self-center px-4 py-2 mt-4 text-center text-sm bg-red-100 border-red-300 text-red-400"
-                            }
-                        >
-                            {errorText}
-                        </div>
-                    )}
-                </div>
+                }
+
                 <div className={"flex-col m-4 mt-0 h-10"}>
                     <p>Title</p>
                     <input
