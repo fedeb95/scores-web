@@ -23,14 +23,13 @@ function App() {
     }, [session]);
 
     return (
-        <div className="min-w-full min-h-screen flex items-center justify-center bg-gray-200">
+        <div className="">
             {!session ? <Auth /> : 
               <div>
                 {/* <Account key={session.user.id} session={session} />  */}
                 <Home user={session.user} />
               </div>
-            }
-            
+            }   
         </div>
     );
 }
