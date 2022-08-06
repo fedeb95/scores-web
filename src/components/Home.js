@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabaseClient";
+import AddScore from "./AddScore";
 import RecoverPassword from "./RecoverPassword";
-import ScoreItem from "./ScoreItem";
+import ScoreList from "./ScoreList";
 
 const Home = ({ user }) => {
     const [recoveryToken, setRecoveryToken] = useState(null);
@@ -11,6 +12,7 @@ const Home = ({ user }) => {
 
     const filterTextRef = useRef();
     const [isChangingFilter, setChangingFilter] = useState(false);
+    const [isAddingScore, setAddingScore] = useState(false);
     const [filterAttribute, setFilterAttribute] = useState('title');
 
     const [errorText, setError] = useState("");
@@ -50,41 +52,6 @@ const Home = ({ user }) => {
         else setScores(scores);
     };
 
-    const deleteScore = async (id) => {
-        try {
-            await supabase.from("scores").delete().eq("id", id);
-            setScores(scores.filter((x) => x.id !== id));
-        } catch (error) {
-            console.log("error", error);
-        }
-    };
-
-    const addScore = async () => {
-        let titleText = titleTextRef.current.value;
-        let authorText = authorTextRef.current.value;
-        let title = titleText.trim();
-        let author = authorText.trim();
-        if (title.length <= 3) {
-            setError("Title length should be more than 3!");
-        } else {
-            let { data: score, error } = await supabase
-                .from("scores")
-                .insert({ 
-                    title: title, 
-                    url: 'placeholder', 
-                    author: author, 
-                    created_by: user.id 
-                }).single();
-            if (error) setError(error.message);
-            else {
-                setScores([score, ...scores]);
-                setError(null);
-                titleTextRef.current.value = "";
-                authorTextRef.current.value = "";
-            }
-        }
-    };
-
     const filterScores = async () => {
         let query = filterTextRef.current.value.trim();
         if(query.length > 2){
@@ -103,10 +70,6 @@ const Home = ({ user }) => {
     const handleLogout = async () => {
         supabase.auth.signOut().catch(console.error);
     };
-
-    const handleFilterChange = () => {
-
-    }
 
     return recoveryToken ? (
         <RecoverPassword
@@ -135,8 +98,14 @@ const Home = ({ user }) => {
                 >
                     Logout
                 </button>
+                {/* <svg class="h-screen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                </svg> */}
             </header>
             <div className={" px-6 md:columns-2 "}>
+                
+                { !isAddingScore?
+                // TODO make component and add hidden md:inline copy below!
                 <div className={"columns-2"}>
                     <p>Search: </p>
                     <input
@@ -156,6 +125,10 @@ const Home = ({ user }) => {
                     >{filterAttribute.replace(/^\w/, (c) => c.toUpperCase())}</button>
 
                 </div>
+                :
+                <div></div>
+                }
+
                 { isChangingFilter? 
                     <div className={"flex flex-col"}>
                         <button 
@@ -181,75 +154,74 @@ const Home = ({ user }) => {
                             Author
                         </button>
                     </div> 
+                    : <div></div>}
+                {(!isChangingFilter && ! isAddingScore)?
+                    <ScoreList scores={scores} setScores={setScores}></ScoreList>
                     : 
-                    <div
-                        className={"flex flex-col flex-grow p-4"}
-                        style={{ height: "calc(85vh - 11.5rem)" }}
-                    >
-                        <div
-                            className={`p-2 border flex-grow grid ${
-                                scores.length ? "auto-rows-min" : ""
-                            } grid-cols-1 h-2/3 overflow-y-scroll first:mt-8`}
-                        >
-                            {scores.length ? (
-                                scores.map((score) => (
-                                    <ScoreItem
-                                        key={score.id}
-                                        score={score}
-                                        onDelete={() => deleteScore(score.id)}
-                                    />
-                                ))
-                            ) : (
-                                <span
-                                    className={
-                                        "h-full flex justify-center items-center"
-                                    }
-                                >
-                                    You do have any scores yet!
-                                </span>
-                            )}
-                        </div>
-                        {!!errorText && (
-                            <div
-                                className={
-                                    "border max-w-sm self-center px-4 py-2 mt-4 text-center text-sm bg-red-100 border-red-300 text-red-400"
-                                }
-                            >
-                                {errorText}
-                            </div>
-                        )}
-                    </div>
+                    <div></div>
                 }
+            
+            <div className={"hidden md:inline"}>
+                <ScoreList scores={scores} setScores={setScores}></ScoreList>
+            </div>
 
-                <div className={"flex-col m-4 mt-0 h-10"}>
-                    <p>Title</p>
-                    <input
-                        ref={titleTextRef}
-                        type="text"
-                        onKeyUp={(e) => e.key === "Enter" && addScore()}
-                        className={
-                            "bg-gray-200 border px-2 border-gray-300 w-full mr-4"
-                        }
-                    />
-                    <p>Author</p>
-                    <input
-                        ref={authorTextRef}
-                        type="text"
-                        onKeyUp={(e) => e.key === "Enter" && addScore()}
-                        className={
-                            "bg-gray-200 border px-2 border-gray-300 w-full mr-4"
-                        }
-                    />
+            <div className={"flex-col m-4 mt-0 h-10"}>
+            <div 
+                className={"hidden md:inline"}>
+            <AddScore 
+                user={user} 
+                setError={setError} 
+                setScores={setScores} 
+                scores={scores}
+            ></AddScore>
+            </div>
+            <div
+                className={"md:hidden"}>    
+                { isAddingScore? 
+               
+               <div>
                     <button
-                        onClick={addScore}
+                        onClick={() => setAddingScore(false)}
                         className={
-                            "flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                            "md:hidden self-end my-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
                         }
+                        >
+                            Back
+                        </button>
+                
+                    <AddScore 
+                        user={user} 
+                        setError={setError} 
+                        setScores={setScores} 
+                        scores={scores}
+                    ></AddScore>
+               </div>
+                :
+                    
+                <div>
+                <button
+                    onClick={() => setAddingScore(true)}
+                    className={
+                        "md:hidden flex my-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                    }
                     >
-                        Add
+                        Add new score
                     </button>
                 </div>
+        
+                }
             </div>
+            </div>
+            </div>
+            {!!errorText && (
+                <div
+                    className={
+                        "border max-w-sm self-center px-4 py-2 mt-4 text-center text-sm bg-red-100 border-red-300 text-red-400"
+                    }
+                >
+                    {errorText}
+                </div>
+            )}
         </div>
     );
 };

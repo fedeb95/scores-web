@@ -57,7 +57,7 @@ const Auth = () => {
     return (
         <div
             className={
-                "flex flex-col m-10 md:px-80"
+                "flex flex-col m-8 md:px-80 px-5"
             }
         >
             <span
