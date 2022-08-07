@@ -3,12 +3,11 @@ import { supabase } from "../lib/supabaseClient";
 import AddScore from "./AddScore";
 import RecoverPassword from "./RecoverPassword";
 import ScoreList from "./ScoreList";
+import Search from "./Search";
 
 const Home = ({ user }) => {
     const [recoveryToken, setRecoveryToken] = useState(null);
     const [scores, setScores] = useState([]);
-    const titleTextRef = useRef();
-    const authorTextRef = useRef();
 
     const filterTextRef = useRef();
     const [isChangingFilter, setChangingFilter] = useState(false);
@@ -36,7 +35,7 @@ const Home = ({ user }) => {
         }
 
         filterScores().catch(console.error);
-    }, []);
+    }, [recoveryToken]);
 
     useEffect(() => {
         filterScores();
@@ -54,11 +53,13 @@ const Home = ({ user }) => {
 
     const filterScores = async () => {
         let query = filterTextRef.current.value.trim();
-        if(query.length > 2){
+        if(query.length > 0){
+            let queryString = query.split(' ').map(t => t+":* & ").join('').slice(0, -2);
+            console.log(queryString);
             let { data: scores, error } = await supabase
             .from("scores")
             .select("*")
-            .textSearch(filterAttribute, query+':*')
+            .textSearch(filterAttribute, queryString)
             .order("id", { ascending: false });
             if (error) console.log("error", error);
             else setScores(scores);
@@ -70,6 +71,20 @@ const Home = ({ user }) => {
     const handleLogout = async () => {
         supabase.auth.signOut().catch(console.error);
     };
+
+    let searchClassName = "";
+    if(isAddingScore){
+        searchClassName = "hidden md:inline";
+    }else{
+        searchClassName = "";
+    }
+
+    let addScoreClassName = "hidden md:inline";
+    if(isAddingScore){
+        addScoreClassName = "";
+    }else{
+        addScoreClassName = "hidden md:inline";
+    }
 
     return recoveryToken ? (
         <RecoverPassword
@@ -103,31 +118,28 @@ const Home = ({ user }) => {
                 </svg> */}
             </header>
             <div className={" px-6 md:columns-2 "}>
-                
-                { !isAddingScore?
-                // TODO make component and add hidden md:inline copy below!
-                <div className={"columns-2"}>
-                    <p>Search: </p>
-                    <input
-                            ref={filterTextRef}
-                            type="text"
-                            onKeyUp={(e) => filterScores()}
-                            className={
-                                "bg-gray-200 border px-2 border-gray-300 w-full mr-4"
-                            }
-                        />
-
-                    <button
-                        onClick={() => setChangingFilter(!isChangingFilter)}
-                        className={
-                            "flex justify-center py-4 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
-                        }
-                    >{filterAttribute.replace(/^\w/, (c) => c.toUpperCase())}</button>
-
+                <div className={searchClassName}>
+                    <Search 
+                        filterAttribute={filterAttribute} 
+                        filterTextRef={filterTextRef}
+                        filterScores={filterScores}
+                        isChangingFilter={isChangingFilter}
+                        setChangingFilter={setChangingFilter}
+                    ></Search>
+                </div>
+                {/* { !isAddingScore?
+                <div className={"md:hidden"}>
+                    <Search 
+                        filterAttribute={filterAttribute} 
+                        filterTextRef={filterTextRef}
+                        filterScores={filterScores}
+                        isChangingFilter={isChangingFilter}
+                        setChangingFilter={setChangingFilter}
+                    ></Search>
                 </div>
                 :
                 <div></div>
-                }
+                } */}
 
                 { isChangingFilter? 
                     <div className={"flex flex-col"}>
@@ -156,7 +168,9 @@ const Home = ({ user }) => {
                     </div> 
                     : <div></div>}
                 {(!isChangingFilter && ! isAddingScore)?
+                    <div className="md:hidden">
                     <ScoreList scores={scores} setScores={setScores}></ScoreList>
+                    </div>
                     : 
                     <div></div>
                 }
@@ -166,15 +180,6 @@ const Home = ({ user }) => {
             </div>
 
             <div className={"flex-col m-4 mt-0 h-10"}>
-            <div 
-                className={"hidden md:inline"}>
-            <AddScore 
-                user={user} 
-                setError={setError} 
-                setScores={setScores} 
-                scores={scores}
-            ></AddScore>
-            </div>
             <div
                 className={"md:hidden"}>    
                 { isAddingScore? 
@@ -189,12 +194,7 @@ const Home = ({ user }) => {
                             Back
                         </button>
                 
-                    <AddScore 
-                        user={user} 
-                        setError={setError} 
-                        setScores={setScores} 
-                        scores={scores}
-                    ></AddScore>
+                   
                </div>
                 :
                     
@@ -211,6 +211,15 @@ const Home = ({ user }) => {
         
                 }
             </div>
+            <div className={addScoreClassName}>
+                        <AddScore 
+                            user={user} 
+                            setError={setError} 
+                            setScores={setScores} 
+                            scores={scores}
+                            setAddingScore={setAddingScore}
+                        ></AddScore>
+                </div>
             </div>
             </div>
             {!!errorText && (
