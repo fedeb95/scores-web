@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabaseClient";
 import ScoreItem from "./ScoreItem";
 
-const ScoreList = ({ scores, setScores }) => {
+const ScoreList = ({ scores, setScores, setError }) => {
     const deleteScore = async (id) => {
         try {
             await supabase.from("scores").delete().eq("id", id);
@@ -27,6 +27,7 @@ const ScoreList = ({ scores, setScores }) => {
                             key={score.id}
                             score={score}
                             onDelete={() => deleteScore(score.id)}
+                            setError={setError}
                         />
                     ))
                 ) : (

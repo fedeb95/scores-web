@@ -1,7 +1,22 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
-const ScoreItem = ({ score, onDelete }) => {
+const ScoreItem = ({ score, onDelete, setError }) => {
+
+    const downloadFile = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const fileName = score.url;
+        const { data, error } = await supabase.storage.from('scores-files')
+            .download(fileName);
+        const fileURL = URL.createObjectURL(data);
+        //Open the URL on new Window
+        const pdfWindow = window.open();
+        pdfWindow.location.href = fileURL;         
+        if(error){
+            console.log(error);
+        }
+    }
 
     return (
         <div
@@ -10,6 +25,11 @@ const ScoreItem = ({ score, onDelete }) => {
             <span className={"truncate flex-grow"}>
                     {score.title}, {score.author}
             </span>
+            <button
+                onClick={downloadFile}
+            >
+                Download
+            </button>
             <button
                 className={"font-mono text-red-500 text-xl border px-2"}
                 onClick={(e) => {

@@ -169,14 +169,14 @@ const Home = ({ user }) => {
                     : <div></div>}
                 {(!isChangingFilter && ! isAddingScore)?
                     <div className="md:hidden">
-                    <ScoreList scores={scores} setScores={setScores}></ScoreList>
+                    <ScoreList scores={scores} setScores={setScores} setError={setError}></ScoreList>
                     </div>
                     : 
                     <div></div>
                 }
             
             <div className={"hidden md:inline"}>
-                <ScoreList scores={scores} setScores={setScores}></ScoreList>
+                <ScoreList scores={scores} setScores={setScores} setError={setError}></ScoreList>
             </div>
 
             <div className={"flex-col m-4 mt-0 h-10"}>
@@ -200,7 +200,11 @@ const Home = ({ user }) => {
                     
                 <div>
                 <button
-                    onClick={() => setAddingScore(true)}
+                    onClick={() => {
+                            setError(null);
+                            setAddingScore(true);
+                        }
+                    }
                     className={
                         "md:hidden flex my-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
                     }

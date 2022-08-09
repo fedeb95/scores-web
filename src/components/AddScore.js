@@ -1,15 +1,29 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
 const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
     const titleTextRef = useRef();
     const authorTextRef = useRef();
+    const [file, setFile] = useState();
+    
+    const onFileChange = (event) => {
+        setFile(event.target.files[0]);
+    }
 
     const addScore = async () => {
         let titleText = titleTextRef.current.value;
         let authorText = authorTextRef.current.value;
+
         let title = titleText.trim();
         let author = authorText.trim();
+        
+        const fileExt = file.name.split('.').pop()
+        if(fileExt !== 'pdf'){
+            setError("Only pdf files are allowed!");
+            return;
+        }
+        const fileName = user.id+'/'+file.name;
+
         if (title.length <= 3) {
             setError("Title length should be more than 3!");
         } else {
@@ -17,16 +31,29 @@ const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
                 .from("scores")
                 .insert({ 
                     title: title, 
-                    url: 'placeholder', 
+                    url: fileName, 
                     author: author, 
                     created_by: user.id 
                 }).single();
-            if (error) setError(error.message);
-            else {
-                setScores([score, ...scores]);
-                setError(null);
-                titleTextRef.current.value = "";
-                authorTextRef.current.value = "";
+            if (error){
+                setError(error.message);
+            } else {
+                const fileName = user.id+'/'+file.name;
+                const { data, error } = await supabase.storage
+                    .from('scores-files')
+                    .upload(fileName, file)
+                if(error){
+                    await supabase.from("scores")
+                        .delete().eq("id", score.id);
+                    setError(error.message);
+                    // TODO when loading scores, if no file exists, delete it
+                    // and maybe tell user
+                }else{
+                    setScores([score, ...scores]);
+                    setError(null);
+                    titleTextRef.current.value = "";
+                    authorTextRef.current.value = "";
+                }
             }
         }
     };
@@ -52,6 +79,13 @@ const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
                         className={
                             "bg-gray-200 border px-2 border-gray-300 w-full mr-4"
                         }
+                    />
+                    <p>File</p>
+                    <input
+                        onChange={onFileChange}
+                        type="file"
+                        id="score"
+                        accept="pdf/*"
                     />
                     <button
                         onClick={() => {
