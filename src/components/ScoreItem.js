@@ -14,7 +14,7 @@ const ScoreItem = ({ score, onDelete, setError }) => {
         const pdfWindow = window.open();
         pdfWindow.location.href = fileURL;         
         if(error){
-            console.log(error);
+            setError(error.message);
         }
     }
 

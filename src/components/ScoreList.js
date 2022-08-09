@@ -2,13 +2,21 @@ import { supabase } from "../lib/supabaseClient";
 import ScoreItem from "./ScoreItem";
 
 const ScoreList = ({ scores, setScores, setError }) => {
-    const deleteScore = async (id) => {
+    const deleteScore = async (score) => {
+        const id = score.id;
         try {
-            await supabase.from("scores").delete().eq("id", id);
-            setScores(scores.filter((x) => x.id !== id));
+            console.log(score.url);
+            let { error: error} = await supabase.storage.from("scores-files").remove([score.url]);
+            if(error){
+                setError(error.message);
+            }else{
+                await supabase.from("scores").delete().eq("id", id);
+                setScores(scores.filter((x) => x.id !== id));
+            }
         } catch (error) {
             console.log("error", error);
         }
+        setError(null);
     };
 
     return (
@@ -26,7 +34,7 @@ const ScoreList = ({ scores, setScores, setError }) => {
                         <ScoreItem
                             key={score.id}
                             score={score}
-                            onDelete={() => deleteScore(score.id)}
+                            onDelete={() => deleteScore(score)}
                             setError={setError}
                         />
                     ))
