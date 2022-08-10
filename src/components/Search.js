@@ -34,7 +34,7 @@ const Search = ({
                     <div className={"flex flex-grow"}>
                         <button 
                         className={ 
-                            "flex mx-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-blue active:bg-red-700 transition duration-150 ease-in-out"
+                            "flex mx-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-black bg-blue-300 hover:bg-blue-200 focus:outline-none focus:border-blue-400 focus:shadow-outline-blue active:bg-blue-400 transition duration-150 ease-in-out"
                         }
                         onClick={() => {
                                 setFilterAttribute('title');
@@ -45,7 +45,7 @@ const Search = ({
                         </button>
                         <button 
                         className={ 
-                            "flex mx-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-blue active:bg-red-700 transition duration-150 ease-in-out"
+                            "flex mx-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-black bg-blue-300 hover:bg-blue-200 focus:outline-none focus:border-blue-400 focus:shadow-outline-blue active:bg-blue-400 transition duration-150 ease-in-out"
                         }
                         onClick={() => {
                                 setFilterAttribute('author');
