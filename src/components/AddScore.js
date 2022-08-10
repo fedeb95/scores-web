@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
+import {v4 as uuidv4} from 'uuid';
 
-const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
+const AddScore = ({ user, setScores, scores, setAddingScore }) => {
     const titleTextRef = useRef();
     const authorTextRef = useRef();
     const [file, setFile] = useState();
+    const [errorText, setError] = useState();
     
     const onFileChange = (event) => {
         setFile(event.target.files[0]);
@@ -17,12 +19,18 @@ const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
         let title = titleText.trim();
         let author = authorText.trim();
         
+        if(!file){
+            setError("Please upload a pdf file.");
+            return;
+        }
+
         const fileExt = file.name.split('.').pop()
         if(fileExt !== 'pdf'){
             setError("Only pdf files are allowed!");
             return;
         }
-        const fileName = user.id+'/'+file.name;
+        const fileName = user.id+'/'+uuidv4()+'-'+file.name;
+        console.log(fileName);
 
         if (title.length <= 3) {
             setError("Title length should be more than 3!");
@@ -38,7 +46,6 @@ const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
             if (error){
                 setError(error.message);
             } else {
-                const fileName = user.id+'/'+file.name;
                 const { data, error } = await supabase.storage
                     .from('scores-files')
                     .upload(fileName, file)
@@ -53,6 +60,7 @@ const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
                     setError(null);
                     titleTextRef.current.value = "";
                     authorTextRef.current.value = "";
+                    setAddingScore(false);
                 }
             }
         }
@@ -87,9 +95,17 @@ const AddScore = ({ user, setError, setScores, scores, setAddingScore }) => {
                         id="score"
                         accept="pdf/*"
                     />
+                    {!!errorText && (
+                        <div
+                            className={
+                                "border max-w-sm self-center px-4 py-2 mt-4 text-center text-sm bg-red-100 border-red-300 text-red-400"
+                            }
+                        >
+                            {errorText}
+                        </div>
+                    )}
                     <button
-                        onClick={() => {
-                                setAddingScore(false);
+                        onClick={async () => {
                                 addScore();
                             }
                         }

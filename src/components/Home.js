@@ -179,8 +179,7 @@ const Home = ({ user }) => {
             </div>
             <div className={addScoreClassName}>
                         <AddScore 
-                            user={user} 
-                            setError={setError} 
+                            user={user}
                             setScores={setScores} 
                             scores={scores}
                             setAddingScore={setAddingScore}

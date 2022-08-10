@@ -21,20 +21,20 @@ const Search = ({
                             }
                         />
                 </div>
-                <div className={"columns-4"}>
+                <div className={"flex flex-grow"}>
                     <button
                         onClick={() => setChangingFilter(!isChangingFilter)}
                         className={
-                            "flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                            "flex mx-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
                         }
                     >{filterAttribute.replace(/^\w/, (c) => c.toUpperCase())}</button>
 
                 
                 { isChangingFilter? 
-                    <div className={""}>
+                    <div className={"flex flex-grow"}>
                         <button 
                         className={ 
-                            "flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-blue active:bg-red-700 transition duration-150 ease-in-out"
+                            "flex mx-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-blue active:bg-red-700 transition duration-150 ease-in-out"
                         }
                         onClick={() => {
                                 setFilterAttribute('title');
@@ -45,7 +45,7 @@ const Search = ({
                         </button>
                         <button 
                         className={ 
-                            "flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-blue active:bg-red-700 transition duration-150 ease-in-out"
+                            "flex mx-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:border-red-700 focus:shadow-outline-blue active:bg-red-700 transition duration-150 ease-in-out"
                         }
                         onClick={() => {
                                 setFilterAttribute('author');
