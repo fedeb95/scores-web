@@ -26,9 +26,10 @@ const ScoreItem = ({ score, onDelete, setError }) => {
                     {score.title}, {score.author}
             </span>
             <button
+                className={"px-2"}
                 onClick={downloadFile}
             >
-                Download
+            &#11015;
             </button>
             <button
                 className={"font-mono text-red-500 text-xl border px-2"}
