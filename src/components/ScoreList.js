@@ -22,7 +22,7 @@ const ScoreList = ({ scores, setScores, setError }) => {
     return (
         <div
             className={"flex flex-col grow"}
-            style={{ height: "calc(85vh - 10.5rem)" }}
+            style={{ height: "calc(80vh - 10.5rem)" }}
         >
             <div
                 className={`border-x flex-grow grid ${
