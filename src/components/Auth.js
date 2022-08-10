@@ -17,7 +17,7 @@ const Auth = () => {
 
         if (error) {
             setHelperText({ error: true, text: error.message });
-        } else if (!user && !error) {
+        } else if (!error) {
             setHelperText({
                 error: false,
                 text: "An email has been sent to you for verification!",
@@ -137,7 +137,7 @@ const Auth = () => {
                     </button>
                 </span>
             </div>
-            <div className="mt-3">
+            <div className="mt-3 hidden">
                 <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                         <div className="w-full mx-1.5 border-t border-gray-300" />
