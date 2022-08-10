@@ -20,7 +20,7 @@ const ScoreItem = ({ score, onDelete, setError }) => {
 
     return (
         <div
-            className={"p-1 max-h-14 flex align-center justify-between border"}
+            className={"p-1 max-h-14 flex align-center justify-between border-y"}
         >
             <span className={"truncate flex-grow"}>
                     {score.title}, {score.author}

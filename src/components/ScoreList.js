@@ -22,10 +22,10 @@ const ScoreList = ({ scores, setScores, setError }) => {
     return (
         <div
             className={"flex flex-col grow"}
-            style={{ height: "calc(85vh - 9.5rem)" }}
+            style={{ height: "calc(85vh - 10.5rem)" }}
         >
             <div
-                className={`flex-grow grid ${
+                className={`border-x flex-grow grid ${
                     scores.length ? "auto-rows-min" : ""
                 } grid-cols-1 h-2/3 overflow-y-scroll first:mt-3`}
             >

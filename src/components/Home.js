@@ -141,7 +141,7 @@ const Home = ({ user }) => {
                 <ScoreList scores={scores} setScores={setScores} setError={setError}></ScoreList>
             </div>
 
-            <div className={"flex-col m-4 mt-0 h-10"}>
+            <div className={"flex-col m-0 mt-4 h-10"}>
             <div
                 className={"md:hidden"}>    
                 { isAddingScore? 
@@ -160,7 +160,7 @@ const Home = ({ user }) => {
                </div>
                 :
                     
-                <div>
+                <div className="">
                 <button
                     onClick={() => {
                             setError(null);
