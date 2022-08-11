@@ -9,10 +9,10 @@ const ScoreItem = ({ score, onDelete, setError }) => {
         const fileName = score.url;
         const { data, error } = await supabase.storage.from('scores-files')
             .download(fileName);
-        const fileURL = URL.createObjectURL(data);
-        //Open the URL on new Window
-        const pdfWindow = window.open();
-        pdfWindow.location.href = fileURL;         
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(data);
+        link.download = `${fileName}-${+new Date()}.pdf`;
+        link.click();         
         if(error){
             setError(error.message);
         }
