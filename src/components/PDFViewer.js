@@ -28,6 +28,8 @@ const PDFViewer = ({ pdfFile, setPdfFile }) => {
 
     const [pageNumber, setPageNumber] = useState(1);
     const [numPages, setNumPages] = useState(1);
+    const [pdfScale, setPdfScale] = useState(1);
+
 
     const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
@@ -50,9 +52,19 @@ const PDFViewer = ({ pdfFile, setPdfFile }) => {
 
                 <p>{pageNumber} / {numPages}</p>
             </div>
+                <div className="flex flex-row grow px-8">
+                    <p>&#128270; {Math.floor(pdfScale * 100)}%</p>
+                    <button 
+                    className={"flex px-2"}
+                    onClick={() => setPdfScale(pdfScale < 2? pdfScale + 0.1 : 1)}>&#10133;</button>
+                    <button 
+                    className={"flex px-2"}
+                    onClick={() => setPdfScale(pdfScale > 0.1? pdfScale - 0.1 : 0.1)}>&#10134;</button>
+                </div>
+
             
             <Document file={pdfFile} onLoadSuccess={onDocumentLoadSuccess}>
-                <Page height={height} width={width} pageNumber={pageNumber} />
+                <Page height={height} width={width} scale={pdfScale} pageNumber={pageNumber} />
             </Document>
             
         </div>
