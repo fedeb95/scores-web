@@ -5,6 +5,8 @@ import RecoverPassword from "./RecoverPassword";
 import ScoreList from "./ScoreList";
 import Search from "./Search";
 
+import PDFViewer from "./PDFViewer";
+
 const Home = ({ user }) => {
     const [recoveryToken, setRecoveryToken] = useState(null);
     const [scores, setScores] = useState([]);
@@ -13,6 +15,8 @@ const Home = ({ user }) => {
     const [isChangingFilter, setChangingFilter] = useState(false);
     const [isAddingScore, setAddingScore] = useState(false);
     const [filterAttribute, setFilterAttribute] = useState('title');
+
+    const [pdfFile, setPdfFile] = useState();
 
     const [errorText, setError] = useState("");
 
@@ -117,85 +121,107 @@ const Home = ({ user }) => {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                 </svg> */}
             </header>
-            <div className={" px-6 md:columns-2 "}>
-                <div className={searchClassName}>
-                    <Search 
-                        filterAttribute={filterAttribute} 
-                        setFilterAttribute={setFilterAttribute}
-                        filterTextRef={filterTextRef}
-                        filterScores={filterScores}
-                        isChangingFilter={isChangingFilter}
-                        setChangingFilter={setChangingFilter}
-                    ></Search>
+
+            { pdfFile?
+                        
+                (<div className="flex">
+                    <PDFViewer pdfFile={pdfFile} setPdfFile={setPdfFile}/>
+                </div>)
+    
+            :
+            (
+            <div>
+                <div className={" px-6 md:columns-2 "}>
+                    <div className={searchClassName}>
+                        <Search 
+                            filterAttribute={filterAttribute} 
+                            setFilterAttribute={setFilterAttribute}
+                            filterTextRef={filterTextRef}
+                            filterScores={filterScores}
+                            isChangingFilter={isChangingFilter}
+                            setChangingFilter={setChangingFilter}
+                        ></Search>
+                    </div>
+
+                    {!isAddingScore?
+                        <div className="md:hidden">
+                        <ScoreList 
+                            scores={scores} 
+                            setScores={setScores} 
+                            setError={setError}
+                            setPdfFile={setPdfFile}
+                        ></ScoreList>
+                        </div>
+                        : 
+                        <div></div>
+                    }
+                
+                <div className={"hidden md:inline"}>
+                    <ScoreList 
+                        scores={scores} 
+                        setScores={setScores} 
+                        setError={setError}
+                        setPdfFile={setPdfFile}
+                    ></ScoreList>
                 </div>
 
-                {!isAddingScore?
-                    <div className="md:hidden">
-                    <ScoreList scores={scores} setScores={setScores} setError={setError}></ScoreList>
-                    </div>
-                    : 
-                    <div></div>
-                }
-            
-            <div className={"hidden md:inline"}>
-                <ScoreList scores={scores} setScores={setScores} setError={setError}></ScoreList>
-            </div>
-
-            <div className={"flex-col m-0 mt-4 h-10"}>
-            <div
-                className={"md:hidden"}>    
-                { isAddingScore? 
-               
-               <div>
+                <div className={"flex-col m-0 mt-4 h-10"}>
+                <div
+                    className={"md:hidden"}>    
+                    { isAddingScore? 
+                
+                <div>
+                        <button
+                            onClick={() => setAddingScore(false)}
+                            className={
+                                "md:hidden self-end my-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                            }
+                            >
+                                Back
+                            </button>
+                    
+                    
+                </div>
+                    :
+                        
+                    <div className="">
                     <button
-                        onClick={() => setAddingScore(false)}
+                        onClick={() => {
+                                setError(null);
+                                setAddingScore(true);
+                            }
+                        }
                         className={
-                            "md:hidden self-end my-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
+                            "md:hidden flex my-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
                         }
                         >
-                            Back
+                            Add new score
                         </button>
-                
-                   
-               </div>
-                :
-                    
-                <div className="">
-                <button
-                    onClick={() => {
-                            setError(null);
-                            setAddingScore(true);
+                    </div>
+            
+                    }
+                </div>
+                <div className={addScoreClassName}>
+                            <AddScore 
+                                user={user}
+                                setScores={setScores} 
+                                scores={scores}
+                                setAddingScore={setAddingScore}
+                            ></AddScore>
+                    </div>
+                </div>
+                </div>
+                {!!errorText && (
+                    <div
+                        className={
+                            "border max-w-sm self-center px-4 py-2 mt-4 text-center text-sm bg-red-100 border-red-300 text-red-400"
                         }
-                    }
-                    className={
-                        "md:hidden flex my-2 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue active:bg-blue-700 transition duration-150 ease-in-out"
-                    }
                     >
-                        Add new score
-                    </button>
-                </div>
-        
-                }
-            </div>
-            <div className={addScoreClassName}>
-                        <AddScore 
-                            user={user}
-                            setScores={setScores} 
-                            scores={scores}
-                            setAddingScore={setAddingScore}
-                        ></AddScore>
-                </div>
-            </div>
-            </div>
-            {!!errorText && (
-                <div
-                    className={
-                        "border max-w-sm self-center px-4 py-2 mt-4 text-center text-sm bg-red-100 border-red-300 text-red-400"
-                    }
-                >
-                    {errorText}
-                </div>
-            )}
+                        {errorText}
+                    </div>
+                )}
+            </div>)
+            }
         </div>
     );
 };
