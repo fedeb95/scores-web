@@ -96,10 +96,10 @@ const Home = ({ user }) => {
             setRecoveryToken={setRecoveryToken}
         />
     ) : (
-        <div className={""}>
+        <div className={"overflow-clip"} style={{height: "100%"}}>
             <header
                 className={
-                    "flex justify-between items-center px-10 h-16 bg-gray-900"
+                    "flex flex-row justify-between items-center px-10 h-16 bg-gray-900"
                 }
             >
                 <span
@@ -124,7 +124,7 @@ const Home = ({ user }) => {
 
             { pdfFile?
                         
-                (<div className="flex">
+                (<div className="overflow-clip">
                     <PDFViewer pdfFile={pdfFile} setPdfFile={setPdfFile}/>
                 </div>)
     

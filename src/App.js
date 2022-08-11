@@ -23,9 +23,9 @@ function App() {
     }, [session]);
 
     return (
-        <div className="">
+        <div className="overflow-clip">
             {!session ? <Auth /> : 
-              <div>
+              <div className="overflow-clip">
                 {/* <Account key={session.user.id} session={session} />  */}
                 <Home user={session.user} />
               </div>
