@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabaseClient";
 import ScoreItem from "./ScoreItem";
 
-const ScoreList = ({ scores, setScores, setError, setPdfFile }) => {
+const ScoreList = ({ scores, setScores, setError, setActiveFile }) => {
     const deleteScore = async (score) => {
         const id = score.id;
         try {
@@ -36,7 +36,7 @@ const ScoreList = ({ scores, setScores, setError, setPdfFile }) => {
                             score={score}
                             onDelete={() => deleteScore(score)}
                             setError={setError}
-                            setPdfFile={setPdfFile}
+                            setActiveFile={setActiveFile}
                         />
                     ))
                 ) : (

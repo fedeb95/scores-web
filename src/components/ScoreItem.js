@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
-const ScoreItem = ({ score, onDelete, setError, setPdfFile }) => {
+const ScoreItem = ({ score, onDelete, setError, setActiveFile }) => {
 
     const loadPdfFile = async (e) => {
         e.preventDefault();
@@ -10,7 +10,7 @@ const ScoreItem = ({ score, onDelete, setError, setPdfFile }) => {
         const { data, error } = await supabase.storage.from('scores-files')
             .download(fileName);
         
-        setPdfFile(data);       
+        setActiveFile(data);       
         if(error){
             setError(error.message);
         }

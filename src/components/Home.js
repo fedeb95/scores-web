@@ -5,7 +5,7 @@ import RecoverPassword from "./RecoverPassword";
 import ScoreList from "./ScoreList";
 import Search from "./Search";
 
-import PDFViewer from "./PDFViewer";
+import FileViewer from "./FileViewer";
 
 const Home = ({ user }) => {
     const [recoveryToken, setRecoveryToken] = useState(null);
@@ -16,7 +16,7 @@ const Home = ({ user }) => {
     const [isAddingScore, setAddingScore] = useState(false);
     const [filterAttribute, setFilterAttribute] = useState('title');
 
-    const [pdfFile, setPdfFile] = useState();
+    const [activeFile, setActiveFile] = useState();
 
     const [errorText, setError] = useState("");
 
@@ -122,10 +122,10 @@ const Home = ({ user }) => {
                 </svg> */}
             </header>
 
-            { pdfFile?
+            { activeFile?
                         
                 (<div className="overflow-clip">
-                    <PDFViewer pdfFile={pdfFile} setPdfFile={setPdfFile}/>
+                    <FileViewer file={activeFile} setActiveFile={setActiveFile} />
                 </div>)
     
             :
@@ -149,7 +149,7 @@ const Home = ({ user }) => {
                             scores={scores} 
                             setScores={setScores} 
                             setError={setError}
-                            setPdfFile={setPdfFile}
+                            setActiveFile={setActiveFile}
                         ></ScoreList>
                         </div>
                         : 
@@ -161,7 +161,7 @@ const Home = ({ user }) => {
                         scores={scores} 
                         setScores={setScores} 
                         setError={setError}
-                        setPdfFile={setPdfFile}
+                        setActiveFile={setActiveFile}
                     ></ScoreList>
                 </div>
 
