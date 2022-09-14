@@ -25,7 +25,7 @@ const AddScore = ({ user, setScores, scores, setAddingScore }) => {
         }
 
         const fileExt = file.name.split('.').pop()
-        if(fileExt !== 'pdf'){
+        if(!['pdf', 'png', 'jpg', 'jpeg'].includes(fileExt)){
             setError("Only pdf files are allowed!");
             return;
         }
