@@ -93,7 +93,7 @@ const AddScore = ({ user, setScores, scores, setAddingScore }) => {
                         onChange={onFileChange}
                         type="file"
                         id="score"
-                        accept="pdf/*"
+                        // accept="pdf/*"
                     />
                     {!!errorText && (
                         <div
